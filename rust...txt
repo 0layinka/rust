@@ -1,0 +1,56 @@
+// fn main(){
+//     println!("hello world");
+    
+//     let x:i8 = 5;
+//     println!("x = {}", x);
+    
+//     // tuple
+//     let tup = (23, true);
+//     println!("the first element of the tuple is {}", tup.0);
+    
+//     // array
+//     let arr: [i8; 2] = [25, 25];
+//     println!("the first element of the array is {}", arr[0])
+// }
+
+// interactive console
+// use std::io;
+// fn main(){
+//     println!("hello world");
+//     let mut input = String::new();
+//     io::stdin().read_line(&mut input).expect("failed to read the line...");
+//     let int_input: i64 = input.trim().parse().unwrap();
+    
+//     println!("{}",int_input )
+    
+// }
+
+// conditions
+// fn main(){
+//     let name = "Ola";
+    
+//     if name == "Quazeem" {
+//         println!("we are namesake");
+//     }
+//     else if name == "Ola"{
+//         println!("our names are familiar")
+//     }else{
+//         println!("our name are not the same, thanks")
+//     }
+// }
+
+// functions
+fn main(){
+    println!("hello world!!");
+    let result = add_number(20, 4);
+    println!("{}", result)
+}
+
+fn add_number(x:i32, y:i32) -> i32 {
+    let result = x + y;
+    if result > 10{
+        return result - 10;
+    }else {
+        return result;
+    }
+}
