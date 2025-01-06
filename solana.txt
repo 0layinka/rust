@@ -1,0 +1,64 @@
+use anchor_lang::prelude::*;
+
+declare_id!("D7YV64fce5bC5Df4W5EphnBHGNK742biGi7UkipMCWru");
+
+pub const ANCHOR_DISCRIMINATOR_SIZE: usize = 8;
+
+#[program]
+pub mod favourites {
+    use super::*;
+
+    pub fn set_favourites(
+        context: Context<SetFavourites>, 
+        number: u64, 
+        color: String, 
+        hobbies: Vec<String>
+    ) -> Result<()> {
+        // Log messages for debugging
+        msg!("Greetings from {}", context.program_id);
+        let user_public_key = context.accounts.user.key();
+        msg!(
+            "User {}'s favourite number is {} and their hobbies are {:?}",
+            user_public_key,
+            number,
+            hobbies
+        );
+
+        // Update the account
+        let favourite = &mut context.accounts.favourite;
+        favourite.number = number;
+        favourite.color = color;
+        favourite.hobbies = hobbies;
+
+        Ok(())
+    }
+}
+
+#[account]
+#[derive(InitSpace)]
+pub struct Favourites {
+    pub number: u64,
+
+    #[max_len(50)] // String with a max length of 50 bytes
+    pub color: String,
+
+    #[max_len(5, 50)] // Vec<String> with max 5 elements, each up to 50 bytes
+    pub hobbies: Vec<String>,
+}
+
+#[derive(Accounts)]
+pub struct SetFavourites<'info> {
+    #[account(mut)]
+    pub user:a Signer<'info>,
+
+    #[account(
+        init_if_needed,
+        payer = user, // `payer` keyword is used instead of `player`
+        space = ANCHOR_DISCRIMINATOR_SIZE + Favourites::INIT_SPACE, // Fixed calculation for space
+        seeds = [b"favourites", user.key().as_ref()],
+        bump
+    )]
+    pub favourite: Account<'info, Favourites>, // Fixed typo `Acount` -> `Account`
+
+    pub system_program: Program<'info, System>,
+}
