@@ -1,0 +1,39 @@
+use anchor_lang::prelude::*;
+
+declare_id!("AA6AG2PFzy637UYLy8Z7GvU4WxtnsjytXcCkS6i2bkjL");
+
+#[program]
+pub mod hello_world{
+    use super::*;
+
+    pub fn hello_world(context: Context<HelloWorld>) -> Result<()> {
+        msg!("hello world");
+
+        Ok(())
+    }
+}
+
+#[derive(Accounts)]
+pub struct HelloWorld {}
+
+			good morning quazeem
+
+use anchor_lang::prelude::*;
+
+declare_id!("EuFNe455AVBBy2DfteTLQoPUCtzLMWqY24hX3QvjY4Bb");
+
+#[program]
+pub mod good_Morning{
+    use super::*;
+
+    pub fn morning(_context: Context<Morning>) -> Result<()> {
+        msg!("good morning quazeem");
+
+        Ok(())
+    }
+
+}
+
+
+#[derive(Accounts)]
+pub struct Morning{}

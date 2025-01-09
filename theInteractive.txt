@@ -1,0 +1,58 @@
+use  anchor_lang::prelude::*;
+
+declare_id!("EuFNe455AVBBy2DfteTLQoPUCtzLMWqY24hX3QvjY4Bb");
+
+#[program]
+pub mod user_input{
+    use super::*;
+
+    pub fn input(ctx:Context<UserData>, 
+    name: String, 
+    age:u8,
+    gender: String
+    ) -> Result<()>{
+        let user_public_key = ctx.accounts.user.key();
+
+        msg!("hi this is {}", ctx.program_id);
+        msg!("and this is your info ....the name:{}, your age:{}, and your gender:{}",name, age, gender);
+
+        ctx.accounts.UserData.set_inner(UserData{
+            name, 
+            age,
+            gender,
+        });
+
+
+        Ok(())
+    }
+}
+
+#[account]
+#[derive(InitSpace)]
+pub struct UserData{
+    #[max_len(50)]
+    pub name: String,
+
+   
+    pub age: u8,
+
+    #[max_len(20)]
+    pub gender: String,
+}
+
+#[derive(Accounts)]
+pub struct SetUserData<'info> {
+    #[account(mut)]
+    pub user: Signer<'info>, // The user signing the transaction
+
+    #[account(
+        init_if_needed,
+        payer = user,
+        space = 8 + 50 + 1 + 20, // Space calculation for the UserData account
+        seeds = [b"user_data", user.key().as_ref()],
+        bump
+    )]
+    pub user_data: Account<'info, UserData>, // The user's data account
+
+    pub system_program: Program<'info, System>, // Required for account creation
+}
