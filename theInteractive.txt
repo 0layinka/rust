@@ -1,58 +1,57 @@
-use  anchor_lang::prelude::*;
+use anchor_lang::prelude::*;
 
 declare_id!("EuFNe455AVBBy2DfteTLQoPUCtzLMWqY24hX3QvjY4Bb");
 
+pub const ANCHOR_DISCRIMINATOR_SIZE: usize = 8;
+
 #[program]
-pub mod user_input{
+pub mod Output{
     use super::*;
 
-    pub fn input(ctx:Context<UserData>, 
-    name: String, 
-    age:u8,
-    gender: String
-    ) -> Result<()>{
-        let user_public_key = ctx.accounts.user.key();
+    pub fn input(context:Context<SetInput>, name: String, age: u8, gender: String) -> Result<()> {
 
-        msg!("hi this is {}", ctx.program_id);
-        msg!("and this is your info ....the name:{}, your age:{}, and your gender:{}",name, age, gender);
+        msg!("hello {}, i lernt your age is {}, and you are a {}. ", name, age, gender);
 
-        ctx.accounts.UserData.set_inner(UserData{
-            name, 
+        context.accounts.storage.set_inner(Storage {
+            name,
             age,
-            gender,
+            gender
         });
 
-
         Ok(())
+        
+        
     }
 }
 
 #[account]
 #[derive(InitSpace)]
-pub struct UserData{
+pub struct Storage{
     #[max_len(50)]
     pub name: String,
 
-   
     pub age: u8,
 
-    #[max_len(20)]
-    pub gender: String,
+    #[max_len(10)]
+    pub gender: String
 }
 
+
 #[derive(Accounts)]
-pub struct SetUserData<'info> {
+pub struct SetInput<'info>{
     #[account(mut)]
-    pub user: Signer<'info>, // The user signing the transaction
+    pub user: Signer<'info>,
 
     #[account(
-        init_if_needed,
-        payer = user,
-        space = 8 + 50 + 1 + 20, // Space calculation for the UserData account
-        seeds = [b"user_data", user.key().as_ref()],
-        bump
-    )]
-    pub user_data: Account<'info, UserData>, // The user's data account
+        init_if_needed, 
+        payer = user, 
+        space = ANCHOR_DISCRIMINATOR_SIZE + Storage::INIT_SPACE, 
+        seeds=[b"favorites", user.key().as_ref()],
+    bump)]
+    
+    pub storage: Account<'info, Storage>,
 
-    pub system_program: Program<'info, System>, // Required for account creation
+    pub system_program: Program<'info, System>,
+
+
 }
